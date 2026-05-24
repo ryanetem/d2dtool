@@ -222,7 +222,7 @@ AA_NAMES = {
 METRICS = {
     "kcat/KM (1/(mM min))": "Catalytic Efficiency",
     "kcat (1/min)": "Turnover (kcat)",
-    "Substrate Affinity (1/mM)": "Substrate Affinity (1/KM)",
+    "KM (mM)": "Substrate Affinity (KM)",
     "T50 (degrees C)": "T50",
     "Tm (degrees C)": "Tm",
     "Yield (mg/mL)": "Yield",
@@ -233,10 +233,6 @@ def load_data():
     script_dir = os.path.dirname(os.path.abspath(__file__))
     df = pd.read_csv(os.path.join(script_dir, "BglB_characterization_data_curated.csv"))
     df = df.rename(columns={"Variant": "Mutant"})
-    df["KM (mM)"] = pd.to_numeric(df["KM (mM)"], errors="coerce")
-    df["Substrate Affinity (1/mM)"] = np.where(
-        df["KM (mM)"] > 0, 1.0 / df["KM (mM)"], np.nan
-    )
     for c in METRICS:
         if c in df.columns:
             df[c] = pd.to_numeric(df[c], errors="coerce")
@@ -468,7 +464,7 @@ with tabs[0]:
         on_select="rerun", key="region_chart"
     )
 
-    if metric == "Substrate Affinity (1/mM)":
+    if metric == "KM (mM)":
         st.markdown("*A higher KM means lower substrate affinity.*")
 
     clicked_region = None
